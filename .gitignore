@@ -165,3 +165,19 @@ cython_debug/
 #.idea/
 
 test.py
+
+# Python-specific files
+*.pyc
+*.pyo
+__pycache__/
+.pytest_cache/
+.tox/
+
+# Django-specific files
+db.sqlite3
+.DS_Store
+
+# IDE and editor files
+.idea/
+*.swp
+*.DS_Store
