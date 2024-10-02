@@ -5,7 +5,8 @@ class University(models.Model):
 
 
 class FieldOfStudy(models.Model):
-    unique_code = models.CharField(max_length=50)
+    unique_code = models.IntegerField(max_length=50, unique=True)
+    exam_group = models.CharField(max_length=50)
     name = models.CharField(max_length=255)
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     requires_exam = models.BooleanField()
@@ -20,4 +21,4 @@ class EnrollmentData(models.Model):
     second_half_acceptances = models.IntegerField()
     women = models.CharField(max_length=50)
     men = models.CharField(max_length=50)
-    extra_information = models.TextField()
+    extra_information = models.TextField(null=True)
