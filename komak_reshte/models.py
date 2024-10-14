@@ -2,10 +2,11 @@ from django.db import models
 
 class University(models.Model):
     name = models.CharField(max_length=255)
+    province = models.CharField(max_length=255)
 
 
 class FieldOfStudy(models.Model):
-    unique_code = models.IntegerField(max_length=50, unique=True)
+    unique_code = models.IntegerField(unique=True)
     exam_group = models.CharField(max_length=50)
     name = models.CharField(max_length=255)
     university = models.ForeignKey(University, on_delete=models.CASCADE)
@@ -13,7 +14,7 @@ class FieldOfStudy(models.Model):
     tuition_type = models.CharField(max_length=50)
     
     def __str__(self):
-        return self.unique_code
+        return str(self.unique_code)
 
 class EnrollmentData(models.Model):
     field_of_study = models.OneToOneField(FieldOfStudy, on_delete=models.CASCADE)

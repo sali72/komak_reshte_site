@@ -4,7 +4,9 @@ from . import views
 
 app_name = "komak_reshte"
 urlpatterns = [
-    path("reshte", views.index, name="index"),
+    path('', views.create_list, name='create_list'),
+    path('export_csv/', views.export_csv, name='export_csv'),
+    
     # path("", views.IndexView.as_view(), name="index"),
     # path("<int:pk>/", views.DetailView.as_view(), name="detail"),
     # path("<int:pk>/results/", views.ResultsView.as_view(), name="results"),
