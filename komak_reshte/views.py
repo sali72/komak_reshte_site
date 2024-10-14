@@ -3,53 +3,49 @@ import csv
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from .crud.forms import FieldOfStudyForm
 from .models import EnrollmentData, FieldOfStudy, University
+from .crud.forms import FieldOfStudyForm
+
 
 def create_list(request):
     if "field_list" not in request.session:
         request.session["field_list"] = []
-    
+
     if request.method == "POST":
         form = FieldOfStudyForm(request.POST)
 
         if form.is_valid():
-            selected_province = form.cleaned_data['province']
             field_list = request.session["field_list"]
 
-            if selected_province == '':  # All provinces selected
-                new_entries = [{
-                    "field_of_study": entry.id,
-                    "order": entry.order
-                } for entry in FieldOfStudy.objects.all()]
-            else:
-                universities = University.objects.filter(province=selected_province)
-                new_entries = [{
-                    "field_of_study": entry.id,
-                    "order": entry.order
-                } for entry in FieldOfStudy.objects.filter(university__in=universities)]
+            new_entry = {
+                "field_of_study": form.cleaned_data["field_of_study"],
+                "order": form.cleaned_data["order"],
+            }
 
-            field_list.extend(new_entries)
+            field_list.append(new_entry)
+
             request.session["field_list"] = field_list
             request.session.modified = True
+            print(request.session["field_list"])
             return redirect("komak_reshte:create_list")
         else:
             errors = form.errors
             for field, error_list in errors.items():
                 for error_message in error_list:
                     print(f"Error for field '{field}': {error_message}")
-            context = {'form': form}
-            return render(request, 'create_list.html', context)
+            context = {"form": form}
+            print(request.session["field_list"])
+            return render(request, "komak_reshte/create_list.html", context)
     else:
         form = FieldOfStudyForm()
 
-    # Render the template with the form and the field_list from the session
+    print(request.session["field_list"])
     return render(
         request,
-        "create_list.html",
+        "komak_reshte/create_list.html",
         {"form": form, "field_list": request.session["field_list"]},
     )
-
+    
 
 
 
