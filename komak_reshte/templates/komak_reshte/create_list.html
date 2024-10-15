@@ -71,6 +71,7 @@
                 animation: 150,
                 onEnd: function (evt) {
                     updateOrder();
+                    saveOrder();
                 }
             });
 
@@ -79,6 +80,26 @@
                 $('#sortable-list li').each(function() {
                     $(this).find('.order').text('Order: ' + order);
                     order++;
+                });
+            }
+
+            function saveOrder() {
+                var orderedData = [];
+                $('#sortable-list li').each(function() {
+                    var id = $(this).data('id');
+                    orderedData.push(id);
+                });
+
+                $.ajax({
+                    url: '{% url "komak_reshte:update_order" %}',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'ordered_data': JSON.stringify(orderedData)
+                    },
+                    success: function(response) {
+                        console.log(response.message);
+                    }
                 });
             }
 

@@ -1,4 +1,5 @@
 import csv
+import json
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -29,7 +30,7 @@ def handle_post_request(request):
 
 
 def save_form_data_to_session(request, form):
-    field_list = request.session["field_list"]
+    field_list = request.session.get("field_list", [])
     new_entry = {
         "field_of_study": form.cleaned_data["field_of_study"],
         "order": len(field_list)
@@ -91,6 +92,47 @@ def clear_list(request):
         request.session.modified = True
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
+
+
+def update_order(request):
+    if request.method == "POST":
+        ordered_data = _get_ordered_data_from_request(request)
+        field_list = _get_field_list_from_session(request)
+
+        field_dict = _create_field_dict(field_list)
+        new_field_list = _update_field_list_order(ordered_data, field_dict)
+
+        _save_field_list_to_session(request, new_field_list)
+        return JsonResponse({"message": "Order updated successfully"})
+
+    return JsonResponse({"message": "Invalid request method"}, status=400)
+
+
+def _get_ordered_data_from_request(request):
+    return json.loads(request.POST.get("ordered_data", "[]"))
+
+
+def _get_field_list_from_session(request):
+    return request.session.get("field_list", [])
+
+
+def _create_field_dict(field_list):
+    return {str(item["field_of_study"]): item for item in field_list}
+
+
+def _update_field_list_order(ordered_data, field_dict):
+    new_field_list = []
+    for order, field_id in enumerate(ordered_data, start=1):
+        field_id = str(field_id)
+        if field_id in field_dict:
+            field_dict[field_id]["order"] = order
+            new_field_list.append(field_dict[field_id])
+    return new_field_list
+
+
+def _save_field_list_to_session(request, new_field_list):
+    request.session["field_list"] = new_field_list
+    request.session.modified = True
 
 
 def export_csv(request):
