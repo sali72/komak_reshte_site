@@ -11,7 +11,6 @@ class FieldOfStudyForm(forms.Form):
     field_of_study = forms.ChoiceField(
         choices=[("", "None")], required=True, widget=forms.Select()
     )
-    order = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

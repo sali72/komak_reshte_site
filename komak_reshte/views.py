@@ -32,7 +32,8 @@ def save_form_data_to_session(request, form):
     field_list = request.session["field_list"]
     new_entry = {
         "field_of_study": form.cleaned_data["field_of_study"],
-        "order": form.cleaned_data["order"],
+        "order": len(field_list)
+        + 1,  # Automatically set the order to the end of the list
     }
     field_list.append(new_entry)
     request.session["field_list"] = field_list
