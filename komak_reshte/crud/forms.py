@@ -28,8 +28,20 @@ class FieldOfStudyForm(forms.Form):
     def get_fields_of_study_for_province(self, province):
         universities = University.objects.filter(province=province)
         fields_of_study = FieldOfStudy.objects.filter(university__in=universities)
-        return [("", "None")] + [(field.id, field.name) for field in fields_of_study]
+        return [("", "None")] + [
+            (
+                field.id,
+                f"{field.name} - {field.university.name} (Code: {field.unique_code})",
+            )
+            for field in fields_of_study
+        ]
 
     def get_all_fields_of_study(self):
         all_field_of_study = FieldOfStudy.objects.all()
-        return [("", "None")] + [(field.id, field.name) for field in all_field_of_study]
+        return [("", "None")] + [
+            (
+                field.id,
+                f"{field.name} - {field.university.name} (Code: {field.unique_code})",
+            )
+            for field in all_field_of_study
+        ]

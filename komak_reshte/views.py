@@ -61,7 +61,13 @@ def get_fields_of_study(request):
     province = request.GET.get("province", None)
     fields_of_study = get_filtered_fields_of_study(province)
     response_data = [
-        {"id": field["id"], "name": field["name"]} for field in fields_of_study
+        {
+            "id": field["id"],
+            "name": field["name"],
+            "university": field["university__name"],
+            "unique_code": field["unique_code"],
+        }
+        for field in fields_of_study
     ]
     return JsonResponse({"fields_of_study": response_data})
 
@@ -71,7 +77,7 @@ def get_filtered_fields_of_study(province):
         universities = University.objects.filter(province=province)
         fields_of_study = FieldOfStudy.objects.filter(
             university__in=universities
-        ).values("id", "name")
+        ).values("id", "name", "university__name", "unique_code")
     else:
         fields_of_study = []
     return fields_of_study

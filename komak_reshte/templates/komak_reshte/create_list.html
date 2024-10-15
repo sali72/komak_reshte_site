@@ -45,30 +45,32 @@
     </form>
 
     <script>
-        $(document).ready(function () {
-            $('#id_province').change(function () {
+        $(document).ready(function() {
+            $('#id_province').change(function() {
                 var province = $(this).val();
                 $.ajax({
                     url: '{% url "komak_reshte:get_fields_of_study" %}',
                     data: {
                         'province': province
                     },
-                    success: function (data) {
+                    success: function(data) {
                         updateFieldsOfStudy(data.fields_of_study);
                     }
                 });
             });
-
+        
             function updateFieldsOfStudy(fields_of_study) {
                 var $fieldOfStudy = $('#id_field_of_study');
                 $fieldOfStudy.empty(); // Clear previous options
                 $fieldOfStudy.append('<option value="">None</option>'); // Add the default option
-                $.each(fields_of_study, function (index, field) {
-                    $fieldOfStudy.append('<option value="' + field.id + '">' + field.name + '</option>');
+                $.each(fields_of_study, function(index, field) {
+                    var displayText = `${field.name} - ${field.university} (Code: ${field.unique_code})`;
+                    $fieldOfStudy.append('<option value="' + field.id + '">' + displayText + '</option>');
                 });
             }
         });
-    </script>
+        </script>
+        
 
 
 </body>
