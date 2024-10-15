@@ -31,12 +31,33 @@ def handle_post_request(request):
 
 def save_form_data_to_session(request, form):
     field_list = request.session.get("field_list", [])
+
+    # Fetch the actual FieldOfStudy object
+    field_id = form.cleaned_data["field_of_study"]
+    field = FieldOfStudy.objects.get(id=field_id)
+
     new_entry = {
-        "field_of_study": form.cleaned_data["field_of_study"],
-        "order": len(field_list)
-        + 1,  # Automatically set the order to the end of the list
+        "field_of_study": field.id,
+        "unique_code": field.unique_code,
+        "name": field.name,
+        "exam_group": field.exam_group,
+        "university": field.university.name,
+        "requires_exam": field.requires_exam,
+        "tuition_type": field.tuition_type,
+        "first_half_acceptances": field.enrollmentdata.first_half_acceptances,
+        "second_half_acceptances": field.enrollmentdata.second_half_acceptances,
+        "women": field.enrollmentdata.women,
+        "men": field.enrollmentdata.men,
+        "extra_information": field.enrollmentdata.extra_information,
     }
+
+    # Append new entry
     field_list.append(new_entry)
+
+    # Reorder list
+    for index, item in enumerate(field_list):
+        item["order"] = index + 1
+
     request.session["field_list"] = field_list
     request.session.modified = True
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 </head>
+
 <body>
     <h1>Create Your List of Fields of Study</h1>
     <!-- Form for adding a field of study -->
@@ -22,17 +24,52 @@
         </div>
         <button type="submit">Add to List</button>
     </form>
-    <!-- Display the current list -->
+
+    <!-- Display the current list as a table -->
     <h2>Your List</h2>
-    <ul id="sortable-list">
-        {% if field_list %}
+    <table id="sortable-table">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Unique Code</th>
+                <th>Field of Study</th>
+                <th>Exam Group</th>
+                <th>University</th>
+                <th>Requires Exam</th>
+                <th>Tuition Type</th>
+                <th>First Half Acceptances</th>
+                <th>Second Half Acceptances</th>
+                <th>Women</th>
+                <th>Men</th>
+                <th>Extra Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if field_list %}
             {% for item in field_list %}
-                <li data-id="{{ item.field_of_study }}">{{ item.field_of_study }} - <span class="order">Order: {{ item.order }}</span></li>
+            <tr data-id="{{ item.field_of_study }}">
+                <td>{{ item.order }}</td>
+                <td>{{ item.unique_code }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.exam_group }}</td>
+                <td>{{ item.university }}</td>
+                <td>{{ item.requires_exam }}</td>
+                <td>{{ item.tuition_type }}</td>
+                <td>{{ item.first_half_acceptances }}</td>
+                <td>{{ item.second_half_acceptances }}</td>
+                <td>{{ item.women }}</td>
+                <td>{{ item.men }}</td>
+                <td>{{ item.extra_information }}</td>
+            </tr>
             {% endfor %}
-        {% else %}
-            <li>No items in the list yet.</li>
-        {% endif %}
-    </ul>
+            {% else %}
+            <tr>
+                <td colspan="12">No items in the list yet.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
     <!-- Clear List Button -->
     <button id="clear-list-btn">Clear List</button>
     <!-- Export button (if you want to add an export option) -->
@@ -42,54 +79,48 @@
     </form>
 
     <script>
-        $(document).ready(function() {
-            $('#id_province').change(function() {
+        $(document).ready(function () {
+            $('#id_province').change(function () {
                 var province = $(this).val();
                 $.ajax({
                     url: '{% url "komak_reshte:get_fields_of_study" %}',
                     data: {
                         'province': province
                     },
-                    success: function(data) {
+                    success: function (data) {
                         updateFieldsOfStudy(data.fields_of_study);
                     }
                 });
             });
-
             function updateFieldsOfStudy(fields_of_study) {
                 var $fieldOfStudy = $('#id_field_of_study');
                 $fieldOfStudy.empty(); // Clear previous options
                 $fieldOfStudy.append('<option value="">None</option>'); // Add the default option
-                $.each(fields_of_study, function(index, field) {
+                $.each(fields_of_study, function (index, field) {
                     var displayText = `${field.name} - ${field.university} (Code: ${field.unique_code})`;
                     $fieldOfStudy.append('<option value="' + field.id + '">' + displayText + '</option>');
                 });
             }
-
             // Initialize Sortable
-            new Sortable(document.getElementById('sortable-list'), {
+            new Sortable(document.getElementById('sortable-table').getElementsByTagName('tbody')[0], {
                 animation: 150,
                 onEnd: function (evt) {
                     updateOrder();
                     saveOrder();
                 }
             });
-
             function updateOrder() {
-                let order = 1;
-                $('#sortable-list li').each(function() {
-                    $(this).find('.order').text('Order: ' + order);
-                    order++;
+                $('#sortable-table tbody tr').each(function (index) {
+                    $(this).find('td').first().text(index + 1);
                 });
             }
 
             function saveOrder() {
                 var orderedData = [];
-                $('#sortable-list li').each(function() {
+                $('#sortable-table tbody tr').each(function () {
                     var id = $(this).data('id');
                     orderedData.push(id);
                 });
-
                 $.ajax({
                     url: '{% url "komak_reshte:update_order" %}',
                     type: 'POST',
@@ -97,14 +128,13 @@
                         'csrfmiddlewaretoken': '{{ csrf_token }}',
                         'ordered_data': JSON.stringify(orderedData)
                     },
-                    success: function(response) {
+                    success: function (response) {
                         console.log(response.message);
                     }
                 });
             }
-
             // Clear List Button
-            $('#clear-list-btn').click(function() {
+            $('#clear-list-btn').click(function () {
                 if (confirm('Are you sure you want to clear the list?')) {
                     $.ajax({
                         url: '{% url "komak_reshte:clear_list" %}',
@@ -112,7 +142,7 @@
                         data: {
                             'csrfmiddlewaretoken': '{{ csrf_token }}'
                         },
-                        success: function() {
+                        success: function () {
                             location.reload();
                         }
                     });
@@ -121,4 +151,5 @@
         });
     </script>
 </body>
+
 </html>
