@@ -160,11 +160,32 @@ def export_csv(request):
     field_list = request.session.get("field_list", [])
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="field_list.csv"'
-
     writer = csv.writer(response)
-    writer.writerow(["Field of Study", "Order"])
-
+    
+    # Write the header
+    writer.writerow([
+        "Order", "Unique Code", "Field of Study", "Exam Group", 
+        "University", "Requires Exam", "Tuition Type", 
+        "First Half Acceptances", "Second Half Acceptances", 
+        "Women", "Men", "Extra Information"
+    ])
+    
+    # Write the data rows
     for item in field_list:
-        writer.writerow([item["field_of_study"], item["order"]])
-
+        writer.writerow([
+            item["order"],
+            item["unique_code"],
+            item["name"],
+            item["exam_group"],
+            item["university"],
+            item["requires_exam"],
+            item["tuition_type"],
+            item["first_half_acceptances"],
+            item["second_half_acceptances"],
+            item["women"],
+            item["men"],
+            item["extra_information"]
+        ])
+    
     return response
+
