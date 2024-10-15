@@ -84,6 +84,15 @@ def get_filtered_fields_of_study(province):
     return fields_of_study
 
 
+def clear_list(request):
+    if request.method == "POST":
+        if "field_list" in request.session:
+            del request.session["field_list"]
+        request.session.modified = True
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
 def export_csv(request):
     field_list = request.session.get("field_list", [])
     response = HttpResponse(content_type="text/csv")

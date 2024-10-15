@@ -17,7 +17,7 @@
             {{ form.province }}
         </div>
         <div>
-            <label for="name_field_of_study">Field of Study:</label>
+            <label for="field_of_study">Field of Study:</label>
             {{ form.field_of_study }}
         </div>
         <button type="submit">Add to List</button>
@@ -27,12 +27,14 @@
     <ul id="sortable-list">
         {% if field_list %}
             {% for item in field_list %}
-                <li data-id="{{ item.field_of_study }}">{{ item.field_of_study }} - Order: {{ item.order }}</li>
+                <li data-id="{{ item.field_of_study }}">{{ item.field_of_study }} - <span class="order">Order: {{ item.order }}</span></li>
             {% endfor %}
         {% else %}
             <li>No items in the list yet.</li>
         {% endif %}
     </ul>
+    <!-- Clear List Button -->
+    <button id="clear-list-btn">Clear List</button>
     <!-- Export button (if you want to add an export option) -->
     <form method="post" action="{% url 'komak_reshte:export_csv' %}">
         {% csrf_token %}
@@ -79,6 +81,22 @@
                     order++;
                 });
             }
+
+            // Clear List Button
+            $('#clear-list-btn').click(function() {
+                if (confirm('Are you sure you want to clear the list?')) {
+                    $.ajax({
+                        url: '{% url "komak_reshte:clear_list" %}',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function() {
+                            location.reload();
+                        }
+                    });
+                }
+            });
         });
     </script>
 </body>
