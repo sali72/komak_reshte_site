@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Field of Study List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <h1>Create Your List of Fields of Study</h1>
-
     <!-- Form for adding a field of study -->
     <form method="post">
         {% csrf_token %}
@@ -17,7 +19,7 @@
         </div>
         <div>
             <label for="name_field_of_study">Field of Study:</label>
-            {{ form.field_of_study }} 
+            {{ form.field_of_study }}
         </div>
         <div>
             <label for="id_order">Order:</label>
@@ -25,23 +27,50 @@
         </div>
         <button type="submit">Add to List</button>
     </form>
-
     <!-- Display the current list -->
     <h2>Your List</h2>
     <ul>
         {% if field_list %}
-            {% for item in field_list %}
-                <li>{{ item.field_of_study }} - Order: {{ item.order }}</li>
-            {% endfor %}
+        {% for item in field_list %}
+        <li>{{ item.field_of_study }} - Order: {{ item.order }}</li>
+        {% endfor %}
         {% else %}
-            <li>No items in the list yet.</li>
+        <li>No items in the list yet.</li>
         {% endif %}
     </ul>
-
     <!-- Export button (if you want to add an export option) -->
     <form method="post" action="{% url 'komak_reshte:export_csv' %}">
         {% csrf_token %}
         <button type="submit">Export to CSV</button>
     </form>
+
+    <script>
+        $(document).ready(function () {
+            $('#id_province').change(function () {
+                var province = $(this).val();
+                $.ajax({
+                    url: '{% url "komak_reshte:get_fields_of_study" %}',
+                    data: {
+                        'province': province
+                    },
+                    success: function (data) {
+                        updateFieldsOfStudy(data.fields_of_study);
+                    }
+                });
+            });
+
+            function updateFieldsOfStudy(fields_of_study) {
+                var $fieldOfStudy = $('#id_field_of_study');
+                $fieldOfStudy.empty(); // Clear previous options
+                $fieldOfStudy.append('<option value="">None</option>'); // Add the default option
+                $.each(fields_of_study, function (index, field) {
+                    $fieldOfStudy.append('<option value="' + field.id + '">' + field.name + '</option>');
+                });
+            }
+        });
+    </script>
+
+
 </body>
+
 </html>
