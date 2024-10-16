@@ -7,9 +7,15 @@ class FieldOfStudyForm(forms.Form):
     province_choices = [("", "All")] + [
         (province, province) for province in all_provinces
     ]
-    province = forms.ChoiceField(choices=province_choices, required=False)
+    province = forms.ChoiceField(
+        choices=province_choices,
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
     field_of_study = forms.ChoiceField(
-        choices=[("", "None")], required=True, widget=forms.Select()
+        choices=[("", "None")],
+        required=True,
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
 
     def __init__(self, *args, **kwargs):

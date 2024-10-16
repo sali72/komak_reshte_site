@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    updateOrder();  // Initial order update
+
     $('#id_province').change(function () {
         var province = $(this).val();
         $.ajax({
@@ -11,6 +13,7 @@ $(document).ready(function () {
             }
         });
     });
+
     function updateFieldsOfStudy(fields_of_study) {
         var $fieldOfStudy = $('#id_field_of_study');
         $fieldOfStudy.empty(); // Clear previous options
@@ -20,6 +23,8 @@ $(document).ready(function () {
             $fieldOfStudy.append('<option value="' + field.id + '">' + displayText + '</option>');
         });
     }
+
+    // Initialize Sortable
     new Sortable(document.getElementById('sortable-table').getElementsByTagName('tbody')[0], {
         animation: 150,
         onEnd: function (evt) {
@@ -27,11 +32,15 @@ $(document).ready(function () {
             saveOrder();
         }
     });
+
+    // Update the order column without removing the icon
     function updateOrder() {
         $('#sortable-table tbody tr').each(function (index) {
-            $(this).find('td').first().text(index + 1);
+            $(this).find('td .order-index').text(index + 1);  // Only update the order number
         });
     }
+
+    // Save the order to the server
     function saveOrder() {
         var orderedData = [];
         $('#sortable-table tbody tr').each(function () {
@@ -50,6 +59,8 @@ $(document).ready(function () {
             }
         });
     }
+
+    // Clear the list
     $('#clear-list-btn').click(function () {
         if (confirm('Are you sure you want to clear the list?')) {
             $.ajax({
