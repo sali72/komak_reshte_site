@@ -158,6 +158,18 @@ def _save_field_list_to_session(request, new_field_list):
     request.session.modified = True
 
 
+def delete_item(request, field_of_study_id):
+    if request.method == "POST":
+        field_list = request.session.get("field_list", [])
+        field_list = [
+            item for item in field_list if item["field_of_study"] != field_of_study_id
+        ]
+        request.session["field_list"] = field_list
+        request.session.modified = True
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
 def export_csv(request):
     field_list = request.session.get("field_list", [])
     response = HttpResponse(content_type="text/csv")
@@ -200,5 +212,4 @@ def export_csv(request):
                 item["extra_information"],
             ]
         )
-
     return response

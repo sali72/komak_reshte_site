@@ -19,8 +19,9 @@
         var getFieldsOfStudyUrl = "{% url 'komak_reshte:get_fields_of_study' %}";
         var updateOrderUrl = "{% url 'komak_reshte:update_order' %}";
         var clearListUrl = "{% url 'komak_reshte:clear_list' %}";
+        var deleteItemUrl = "{% url 'komak_reshte:delete_item' 0 %}".slice(0, -2); // Prepare delete URL without ID
         var csrfToken = "{{ csrf_token }}";
-    </script>
+    </script>    
 
     <script src="{% static 'komak_reshte/scripts.js' %}"></script>
 </head>
@@ -74,6 +75,7 @@
                             <th>Women</th>
                             <th>Men</th>
                             <th>Extra Information</th>
+                            <th>Delete </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,6 +98,9 @@
                                 <td>{{ item.women }}</td>
                                 <td>{{ item.men }}</td>
                                 <td>{{ item.extra_information }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger delete-btn">Delete</button>
+                                </td>
                             </tr>
                             {% endfor %}
                         {% else %}

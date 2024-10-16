@@ -75,4 +75,20 @@ $(document).ready(function () {
             });
         }
     });
+    // Event listener for delete buttons
+    $(document).on('click', '.delete-btn', function () {
+        var $row = $(this).closest('tr');
+        var id = $row.data('id');
+        $.ajax({
+            url: deleteItemUrl + id + '/',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': csrfToken
+            },
+            success: function () {
+                $row.remove();
+                updateOrder(); // Update order numbers after deletion
+            }
+        });
+    });
 });
