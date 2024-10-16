@@ -23,6 +23,18 @@ def initialize_session_field_list(request):
 def handle_post_request(request):
     form = FieldOfStudyForm(request.POST)
     if form.is_valid():
+        # Extract the unique_code
+        field_id = form.cleaned_data["field_of_study"]
+        field = FieldOfStudy.objects.get(id=field_id)
+        unique_code = field.unique_code
+
+        # Check for duplicate unique_code
+        field_list = request.session.get("field_list", [])
+        if any(item["unique_code"] == unique_code for item in field_list):
+            # If a duplicate is found, add an error message to the form and re-render
+            form.add_error("field_of_study", "This item already exists in the list.")
+            return render_form_with_errors(request, form)
+
         save_form_data_to_session(request, form)
         return redirect("komak_reshte:create_list")
     else:
@@ -67,7 +79,7 @@ def render_form_with_errors(request, form):
     for field, error_list in errors.items():
         for error_message in error_list:
             print(f"Error for field '{field}': {error_message}")
-    context = {"form": form}
+    context = {"form": form, "field_list": request.session["field_list"]}
     return render(request, "komak_reshte/create_list.html", context)
 
 

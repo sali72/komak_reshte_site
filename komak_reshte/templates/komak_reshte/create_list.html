@@ -43,6 +43,11 @@
                 <label for="field_of_study" class="col-sm-2 col-form-label">Field of Study:</label>
                 <div class="col-sm-10">
                     {{ form.field_of_study }}
+                    {% if form.field_of_study.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.field_of_study.errors }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
     
