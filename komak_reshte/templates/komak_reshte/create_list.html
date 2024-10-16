@@ -1,17 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Field of Study List</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-</head>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Create Field of Study List</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+        <script>
+            var getFieldsOfStudyUrl = "{% url 'komak_reshte:get_fields_of_study' %}";
+            var updateOrderUrl = "{% url 'komak_reshte:update_order' %}";
+            var clearListUrl = "{% url 'komak_reshte:clear_list' %}";
+            var csrfToken = "{{ csrf_token }}";
+        </script>
+        
+        <script src="{% static 'komak_reshte/scripts.js' %}"></script>
 <body>
     <h1>Create Your List of Fields of Study</h1>
-    <!-- Form for adding a field of study -->
     <form method="post">
         {% csrf_token %}
         <div>
@@ -24,8 +29,6 @@
         </div>
         <button type="submit">Add to List</button>
     </form>
-
-    <!-- Display the current list as a table -->
     <h2>Your List</h2>
     <table id="sortable-table">
         <thead>
@@ -69,87 +72,10 @@
             {% endif %}
         </tbody>
     </table>
-
-    <!-- Clear List Button -->
     <button id="clear-list-btn">Clear List</button>
-    <!-- Export button (if you want to add an export option) -->
     <form method="post" action="{% url 'komak_reshte:export_csv' %}">
         {% csrf_token %}
         <button type="submit">Export to CSV</button>
     </form>
-
-    <script>
-        $(document).ready(function () {
-            $('#id_province').change(function () {
-                var province = $(this).val();
-                $.ajax({
-                    url: '{% url "komak_reshte:get_fields_of_study" %}',
-                    data: {
-                        'province': province
-                    },
-                    success: function (data) {
-                        updateFieldsOfStudy(data.fields_of_study);
-                    }
-                });
-            });
-            function updateFieldsOfStudy(fields_of_study) {
-                var $fieldOfStudy = $('#id_field_of_study');
-                $fieldOfStudy.empty(); // Clear previous options
-                $fieldOfStudy.append('<option value="">None</option>'); // Add the default option
-                $.each(fields_of_study, function (index, field) {
-                    var displayText = `${field.name} - ${field.university} (Code: ${field.unique_code})`;
-                    $fieldOfStudy.append('<option value="' + field.id + '">' + displayText + '</option>');
-                });
-            }
-            // Initialize Sortable
-            new Sortable(document.getElementById('sortable-table').getElementsByTagName('tbody')[0], {
-                animation: 150,
-                onEnd: function (evt) {
-                    updateOrder();
-                    saveOrder();
-                }
-            });
-            function updateOrder() {
-                $('#sortable-table tbody tr').each(function (index) {
-                    $(this).find('td').first().text(index + 1);
-                });
-            }
-
-            function saveOrder() {
-                var orderedData = [];
-                $('#sortable-table tbody tr').each(function () {
-                    var id = $(this).data('id');
-                    orderedData.push(id);
-                });
-                $.ajax({
-                    url: '{% url "komak_reshte:update_order" %}',
-                    type: 'POST',
-                    data: {
-                        'csrfmiddlewaretoken': '{{ csrf_token }}',
-                        'ordered_data': JSON.stringify(orderedData)
-                    },
-                    success: function (response) {
-                        console.log(response.message);
-                    }
-                });
-            }
-            // Clear List Button
-            $('#clear-list-btn').click(function () {
-                if (confirm('Are you sure you want to clear the list?')) {
-                    $.ajax({
-                        url: '{% url "komak_reshte:clear_list" %}',
-                        type: 'POST',
-                        data: {
-                            'csrfmiddlewaretoken': '{{ csrf_token }}'
-                        },
-                        success: function () {
-                            location.reload();
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
-
 </html>
