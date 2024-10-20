@@ -1,12 +1,29 @@
 $(document).ready(function () {
     updateOrder();  // Initial order update
 
+    // When the exam group changes
+    $('#id_exam_group').change(function () {
+        var examGroup = $(this).val();
+        $.ajax({
+            url: getFieldsOfStudyUrl,
+            data: {
+                'exam_group': examGroup,
+                'province': $('#id_province').val() // Also include the selected province
+            },
+            success: function (data) {
+                updateFieldsOfStudy(data.fields_of_study);
+            }
+        });
+    });
+
+    // When the province changes
     $('#id_province').change(function () {
         var province = $(this).val();
         $.ajax({
             url: getFieldsOfStudyUrl,
             data: {
-                'province': province
+                'province': province,
+                'exam_group': $('#id_exam_group').val() // Also include the selected exam group
             },
             success: function (data) {
                 updateFieldsOfStudy(data.fields_of_study);
@@ -75,6 +92,7 @@ $(document).ready(function () {
             });
         }
     });
+
     // Event listener for delete buttons
     $(document).on('click', '.delete-btn', function () {
         var $row = $(this).closest('tr');

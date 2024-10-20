@@ -94,7 +94,9 @@ def render_create_list_form(request):
 
 def get_fields_of_study(request):
     province = request.GET.get("province", None)
-    fields_of_study = get_filtered_fields_of_study(province)
+    exam_group = request.GET.get("exam_group", None)
+
+    fields_of_study = get_filtered_fields_of_study(province, exam_group)
     response_data = [
         {
             "id": field["id"],
@@ -107,14 +109,16 @@ def get_fields_of_study(request):
     return JsonResponse({"fields_of_study": response_data})
 
 
-def get_filtered_fields_of_study(province):
+def get_filtered_fields_of_study(province, exam_group):
+    if not exam_group:
+        return FieldOfStudy.objects.none()
     if province:
         universities = University.objects.filter(province=province)
         fields_of_study = FieldOfStudy.objects.filter(
-            university__in=universities
+            university__in=universities, exam_group=exam_group
         ).values("id", "name", "university__name", "unique_code")
     else:
-        fields_of_study = FieldOfStudy.objects.all().values(
+        fields_of_study = FieldOfStudy.objects.filter(exam_group=exam_group).values(
             "id", "name", "university__name", "unique_code"
         )
     return fields_of_study

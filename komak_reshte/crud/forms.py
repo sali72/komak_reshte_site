@@ -1,15 +1,31 @@
 from django import forms
 from ..models import University, FieldOfStudy, EnrollmentData
 
-
 class FieldOfStudyForm(forms.Form):
-    all_provinces = University.objects.values_list("province", flat=True).distinct()
-    province_choices = [("", "All")] + [
-        (province, province) for province in all_provinces
-    ]
+    @staticmethod
+    def get_all_province_choices():
+        all_provinces = University.objects.values_list("province", flat=True).distinct()
+        province_choices = [("", "All")] + [
+            (province, province) for province in all_provinces
+        ]
+        return province_choices
+
+    @staticmethod
+    def get_all_exam_group_choices():
+        all_exam_groups = FieldOfStudy.objects.values_list("exam_group", flat=True).distinct()
+        exam_group_choices = [("", "Select")] + [
+            (exam_group, exam_group) for exam_group in all_exam_groups
+        ]
+        return exam_group_choices
+
     province = forms.ChoiceField(
-        choices=province_choices,
+        choices=get_all_province_choices(),
         required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    exam_group = forms.ChoiceField(
+        choices=get_all_exam_group_choices(),
+        required=True,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     field_of_study = forms.ChoiceField(
@@ -24,15 +40,28 @@ class FieldOfStudyForm(forms.Form):
 
     def populate_fields_of_study(self):
         selected_province = self.data.get("province", None)
-        if selected_province:
-            fields_of_study = self.get_fields_of_study_for_province(selected_province)
+        selected_exam_group = self.data.get("exam_group", None)
+        if selected_exam_group and selected_province:
+            fields_of_study = self.get_fields_of_study_for_province_and_exam_group(selected_province, selected_exam_group)
+        elif selected_exam_group:
+            fields_of_study = self.get_fields_of_study_for_exam_group(selected_exam_group)
         else:
-            fields_of_study = self.get_all_fields_of_study()
+            fields_of_study = [("", "None")]
         self.fields["field_of_study"].choices = fields_of_study
 
-    def get_fields_of_study_for_province(self, province):
+    def get_fields_of_study_for_province_and_exam_group(self, province, exam_group):
         universities = University.objects.filter(province=province)
-        fields_of_study = FieldOfStudy.objects.filter(university__in=universities)
+        fields_of_study = FieldOfStudy.objects.filter(university__in=universities, exam_group=exam_group)
+        return [("", "None")] + [
+            (
+                field.id,
+                f"{field.name} - {field.university.name} (Code: {field.unique_code})",
+            )
+            for field in fields_of_study
+        ]
+
+    def get_fields_of_study_for_exam_group(self, exam_group):
+        fields_of_study = FieldOfStudy.objects.filter(exam_group=exam_group)
         return [("", "None")] + [
             (
                 field.id,
