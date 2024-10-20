@@ -23,31 +23,33 @@ def initialize_session_field_list(request):
 def handle_post_request(request):
     form = FieldOfStudyForm(request.POST)
     if form.is_valid():
-        # Extract the unique_code
-        field_id = form.cleaned_data["field_of_study"]
-        field = FieldOfStudy.objects.get(id=field_id)
-        unique_code = field.unique_code
-
-        # Check for duplicate unique_code
-        field_list = request.session.get("field_list", [])
-        if any(item["unique_code"] == unique_code for item in field_list):
-            # If a duplicate is found, add an error message to the form and re-render
+        field = _get_field_from_form(form)
+        if _field_already_exists_in_list(field, request.session.get("field_list", [])):
             form.add_error("field_of_study", "This item already exists in the list.")
             return render_form_with_errors(request, form)
-
+        if not _exam_group_consistent(field, request.session.get("field_list", [])):
+            form.add_error(
+                "exam_group",
+                "All items in the list must belong to the same exam group.",
+            )
+            return render_form_with_errors(request, form)
         save_form_data_to_session(request, form)
         return redirect("komak_reshte:create_list")
     else:
         return render_form_with_errors(request, form)
 
 
+def _field_already_exists_in_list(field, field_list):
+    return any(item["unique_code"] == field.unique_code for item in field_list)
+
+
+def _exam_group_consistent(field, field_list):
+    return all(item["exam_group"] == field.exam_group for item in field_list)
+
+
 def save_form_data_to_session(request, form):
     field_list = request.session.get("field_list", [])
-
-    # Fetch the actual FieldOfStudy object
-    field_id = form.cleaned_data["field_of_study"]
-    field = FieldOfStudy.objects.get(id=field_id)
-
+    field = _get_field_from_form(form)
     new_entry = {
         "field_of_study": field.id,
         "unique_code": field.unique_code,
@@ -62,16 +64,16 @@ def save_form_data_to_session(request, form):
         "men": field.enrollmentdata.men,
         "extra_information": field.enrollmentdata.extra_information,
     }
-
-    # Append new entry
     field_list.append(new_entry)
-
-    # Reorder list
     for index, item in enumerate(field_list):
         item["order"] = index + 1
-
     request.session["field_list"] = field_list
     request.session.modified = True
+
+
+def _get_field_from_form(form):
+    field_id = form.cleaned_data["field_of_study"]
+    return FieldOfStudy.objects.get(id=field_id)
 
 
 def render_form_with_errors(request, form):
