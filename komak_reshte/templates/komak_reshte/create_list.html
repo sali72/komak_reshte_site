@@ -11,9 +11,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <!-- jQuery and Sortable.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- Ensure these are included in the correct order -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         var getFieldsOfStudyUrl = "{% url 'komak_reshte:get_fields_of_study' %}";
@@ -21,7 +25,7 @@
         var clearListUrl = "{% url 'komak_reshte:clear_list' %}";
         var deleteItemUrl = "{% url 'komak_reshte:delete_item' 0 %}".slice(0, -2); // Prepare delete URL without ID
         var csrfToken = "{{ csrf_token }}";
-    </script>    
+    </script>
 
     <script src="{% static 'komak_reshte/scripts.js' %}"></script>
 </head>
@@ -38,9 +42,9 @@
                 <div class="col-sm-10">
                     {{ form.exam_group }}
                     {% if form.exam_group.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.exam_group.errors }}
-                        </div>
+                    <div class="invalid-feedback d-block">
+                        {{ form.exam_group.errors }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -55,9 +59,9 @@
                 <div class="col-sm-10">
                     {{ form.field_of_study }}
                     {% if form.field_of_study.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.field_of_study.errors }}
-                        </div>
+                    <div class="invalid-feedback d-block">
+                        {{ form.field_of_study.errors }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -65,14 +69,14 @@
             <div class="text-center">
                 <button type="submit" class="btn btn-primary w-50">Add to List</button>
             </div>
-        </form>        
+        </form>
     </div>
-    
+
     <!-- Table and Buttons Section (Lower Part) with same container -->
     <div class="container mt-5">
         <!-- Table and Buttons Container -->
         <div class="p-4 border rounded bg-white shadow-sm">
-            
+
             <!-- Table Section -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover mt-3" id="sortable-table">
@@ -95,43 +99,43 @@
                     </thead>
                     <tbody>
                         {% if field_list %}
-                            {% for item in field_list %}
-                            <tr data-id="{{ item.field_of_study }}">
-                                <!-- Adding a drag handle icon in the Order column -->
-                                <td class="text-center">
-                                    <i class="bi bi-grip-vertical"></i>  <!-- Drag handle icon -->
-                                    <span class="order-index">{{ item.order }}</span>  <!-- Order number -->
-                                </td>                                
-                                <td>{{ item.unique_code }}</td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.exam_group }}</td>
-                                <td>{{ item.university }}</td>
-                                <td>{{ item.requires_exam }}</td>
-                                <td>{{ item.tuition_type }}</td>
-                                <td>{{ item.first_half_acceptances }}</td>
-                                <td>{{ item.second_half_acceptances }}</td>
-                                <td>{{ item.women }}</td>
-                                <td>{{ item.men }}</td>
-                                <td>{{ item.extra_information }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger delete-btn">Delete</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
+                        {% for item in field_list %}
+                        <tr data-id="{{ item.field_of_study }}">
+                            <!-- Adding a drag handle icon in the Order column -->
+                            <td class="text-center">
+                                <i class="bi bi-grip-vertical"></i> <!-- Drag handle icon -->
+                                <span class="order-index">{{ item.order }}</span> <!-- Order number -->
+                            </td>
+                            <td>{{ item.unique_code }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.exam_group }}</td>
+                            <td>{{ item.university }}</td>
+                            <td>{{ item.requires_exam }}</td>
+                            <td>{{ item.tuition_type }}</td>
+                            <td>{{ item.first_half_acceptances }}</td>
+                            <td>{{ item.second_half_acceptances }}</td>
+                            <td>{{ item.women }}</td>
+                            <td>{{ item.men }}</td>
+                            <td>{{ item.extra_information }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
                         {% else %}
-                            <tr>
-                                <td colspan="12" class="text-center">No items in the list yet.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="12" class="text-center">No items in the list yet.</td>
+                        </tr>
                         {% endif %}
                     </tbody>
                 </table>
             </div>
-    
+
             <!-- Buttons Section -->
             <div class="d-flex flex-column align-items-center mt-4 mb-5">
                 <!-- Consistent button width for Clear List -->
                 <button id="clear-list-btn" class="btn btn-outline-danger mb-3 w-50">Clear List</button>
-    
+
                 <!-- Consistent button width for Export to CSV -->
                 <form method="post" action="{% url 'komak_reshte:export_csv' %}" class="w-50">
                     {% csrf_token %}
@@ -140,11 +144,6 @@
             </div>
         </div>
     </div>
-    
-    
-
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

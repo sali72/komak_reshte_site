@@ -1,5 +1,11 @@
 $(document).ready(function () {
     updateOrder();  // Initial order update
+    
+    // Searchable field of study dropdown
+    $('#id_field_of_study').select2({
+        placeholder: "Select a field of study",
+        allowClear: true
+    });
 
     // When the exam group changes
     $('#id_exam_group').change(function () {
