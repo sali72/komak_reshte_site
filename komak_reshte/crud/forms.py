@@ -1,5 +1,6 @@
 from django import forms
-from ..models import University, FieldOfStudy, EnrollmentData
+from ..models import University, FieldOfStudy
+
 
 class FieldOfStudyForm(forms.Form):
     @staticmethod
@@ -12,7 +13,9 @@ class FieldOfStudyForm(forms.Form):
 
     @staticmethod
     def get_all_exam_group_choices():
-        all_exam_groups = FieldOfStudy.objects.values_list("exam_group", flat=True).distinct()
+        all_exam_groups = FieldOfStudy.objects.values_list(
+            "exam_group", flat=True
+        ).distinct()
         exam_group_choices = [("", "Select")] + [
             (exam_group, exam_group) for exam_group in all_exam_groups
         ]
@@ -35,23 +38,35 @@ class FieldOfStudyForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        initial_data = kwargs.get("initial", {})
         super().__init__(*args, **kwargs)
+        self.fields["province"].initial = initial_data.get("province", "")
+        self.fields["exam_group"].initial = initial_data.get("exam_group", "")
         self.populate_fields_of_study()
 
     def populate_fields_of_study(self):
-        selected_province = self.data.get("province", None)
-        selected_exam_group = self.data.get("exam_group", None)
-        if selected_exam_group and selected_province:
-            fields_of_study = self.get_fields_of_study_for_province_and_exam_group(selected_province, selected_exam_group)
-        elif selected_exam_group:
-            fields_of_study = self.get_fields_of_study_for_exam_group(selected_exam_group)
+        selected_province = self.data.get("province") or self.initial.get("province")
+        selected_exam_group = self.data.get("exam_group") or self.initial.get(
+            "exam_group"
+        )
+        if selected_exam_group:
+            if selected_province:
+                fields_of_study = self.get_fields_of_study_for_province_and_exam_group(
+                    selected_province, selected_exam_group
+                )
+            else:
+                fields_of_study = self.get_fields_of_study_for_exam_group(
+                    selected_exam_group
+                )
         else:
             fields_of_study = [("", "None")]
         self.fields["field_of_study"].choices = fields_of_study
 
     def get_fields_of_study_for_province_and_exam_group(self, province, exam_group):
         universities = University.objects.filter(province=province)
-        fields_of_study = FieldOfStudy.objects.filter(university__in=universities, exam_group=exam_group)
+        fields_of_study = FieldOfStudy.objects.filter(
+            university__in=universities, exam_group=exam_group
+        )
         return [("", "None")] + [
             (
                 field.id,
