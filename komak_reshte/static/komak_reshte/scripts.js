@@ -13,7 +13,7 @@ $(document).ready(function () {
     // Initialize searchable field of study dropdown
     function initializeSelect2() {
         $('#id_field_of_study').select2({
-            placeholder: "Select a field of study",
+            placeholder: "Search by field of study, university, or unique code",
             allowClear: true,
             ajax: {
                 url: getFieldsOfStudyUrl,

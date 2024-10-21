@@ -1,6 +1,7 @@
 import csv
 import json
 
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
@@ -95,7 +96,7 @@ def render_create_list_form(request):
 
 
 def get_fields_of_study(request):
-    search_term = request.GET.get("q", "")
+    search_term = request.GET.get("q", "").strip()
     province = request.GET.get("province", None)
     exam_group = request.GET.get("exam_group", None)
     fields_of_study = get_filtered_fields_of_study(province, exam_group, search_term)
@@ -108,12 +109,10 @@ def get_fields_of_study(request):
         }
         for field in fields_of_study
     ]
-    print(response_data)
     return JsonResponse({"results": response_data})
 
 
 def get_filtered_fields_of_study(province, exam_group, search_term):
-    print("search_term: ", search_term)
     if not exam_group:
         return FieldOfStudy.objects.none()
     query = FieldOfStudy.objects.filter(exam_group=exam_group)
@@ -121,7 +120,11 @@ def get_filtered_fields_of_study(province, exam_group, search_term):
         universities = University.objects.filter(province=province)
         query = query.filter(university__in=universities)
     if search_term:
-        query = query.filter(name__icontains=search_term)
+        query = query.filter(
+            Q(name__icontains=search_term)
+            | Q(university__name__icontains=search_term)
+            | Q(unique_code__icontains=search_term)
+        )
     return query.values("id", "name", "university__name", "unique_code")
 
 
