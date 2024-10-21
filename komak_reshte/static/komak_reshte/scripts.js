@@ -3,15 +3,41 @@ $(document).ready(function () {
     updateOrder();
 
     // Initialize searchable dropdown and set event handlers
-    initializeSelect2();
+    InitializeProvinceSelect2();
+    initializeFieldOfStudySelect2();
     handleExamGroupChange();
     handleProvinceChange();
     initializeSortableTable();
     handleClearList();
     handleDeleteButtons();
 
+    
+    // Initialize searchable province dropdown
+    function InitializeProvinceSelect2() {
+        $('#id_province').select2({
+            placeholder: "Search province",
+            allowClear: true,
+            ajax: {
+                url: getProvincesUrl,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { q: params.term }; // Search term
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data.results, function (item) {
+                            return { id: item.id, text: item.text };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
     // Initialize searchable field of study dropdown
-    function initializeSelect2() {
+    function initializeFieldOfStudySelect2() {
         $('#id_field_of_study').select2({
             placeholder: "Search by field of study, university, or unique code",
             allowClear: true,

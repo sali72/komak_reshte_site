@@ -127,6 +127,16 @@ def get_filtered_fields_of_study(province, exam_group, search_term):
         )
     return query.values("id", "name", "university__name", "unique_code")
 
+def get_provinces(request):
+    search_term = request.GET.get("q", "").strip()
+    if search_term:
+        provinces = University.objects.filter(
+            province__icontains=search_term
+        ).values_list("province", flat=True).distinct()
+    else:
+        provinces = University.objects.values_list("province", flat=True).distinct()
+    results = [{"id": province, "text": province} for province in provinces]
+    return JsonResponse({"results": results})
 
 def clear_list(request):
     if request.method == "POST":

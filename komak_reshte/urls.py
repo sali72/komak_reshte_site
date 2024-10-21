@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.create_list, name="create_list"),
     path("export_csv/", views.export_csv, name="export_csv"),
     path("get-fields-of-study/", views.get_fields_of_study, name="get_fields_of_study"),
+    path("get_provinces/", views.get_provinces, name="get_provinces"),
     path("update-order/", views.update_order, name="update_order"),
     path("delete_item/<int:field_of_study_id>/", delete_item, name="delete_item"),
     path("clear-list/", views.clear_list, name="clear_list"),
