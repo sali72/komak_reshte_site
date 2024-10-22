@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-22 15:15+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\komak_reshte\forms.py:20
+msgid "Select"
+msgstr "انتخاب کنید"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:9
+msgid "Create Field of Study List"
+msgstr "ایجاد لیست رشته‌های تحصیلی"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:38
+msgid "Please add your items to the list"
+msgstr "لطفا رشته-محل‌های خود را انتخاب کنید"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:42
+msgid "Exam Group:"
+msgstr "گروه امتحانی:"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:53
+msgid "Province:"
+msgstr "استان:"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:64
+msgid "Field of Study:"
+msgstr "رشته تحصیلی:"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:76
+msgid "Add to List"
+msgstr "اضافه به لیست"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:89
+msgid "Order"
+msgstr "ترتیب"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:89
+msgid "(Drag to reorder)"
+msgstr "(برای مرتب‌سازی بکشید)"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:91
+msgid "Unique Code"
+msgstr "کد یکتا"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:92
+msgid "Field of Study"
+msgstr "رشته تحصیلی"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:93
+msgid "Exam Group"
+msgstr "گروه امتحانی"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:94
+msgid "University"
+msgstr "دانشگاه"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:95
+msgid "Requires Exam"
+msgstr "نیاز به آزمون"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:96
+msgid "Tuition Type"
+msgstr "نوع شهریه"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:97
+msgid "First Half Acceptances"
+msgstr "پذیرش نیمه اول"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:98
+msgid "Second Half Acceptances"
+msgstr "پذیرش نیمه دوم"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:99
+msgid "Women"
+msgstr "زنان"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:100
+msgid "Men"
+msgstr "مردان"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:101
+msgid "Extra Information"
+msgstr "اطلاعات بیشتر"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:126
+msgid "Delete"
+msgstr "حذف"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:132
+msgid "No items in the list yet."
+msgstr "هنوز هیچ موردی در لیست وجود ندارد."
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:141
+msgid "Clear List"
+msgstr "پاک کردن لیست"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:145
+msgid "Export to CSV"
+msgstr " CSV خروجی"
+
+#: .\komak_reshte\templates\komak_reshte\create_list.html:151
+msgid "Import Data"
+msgstr "وارد کردن اطلاعات"
+
+#: .\komak_reshte\views.py:30
+msgid "This item already exists in the list."
+msgstr "این مورد قبلاً در لیست موجود است."
+
+#: .\komak_reshte\views.py:35
+msgid "All items in the list must belong to the same exam group."
+msgstr "تمام موارد در لیست باید متعلق به همان گروه امتحانی باشند."
+
+#: .\komak_reshte\views.py:299
+#, python-brace-format
+msgid "Missing or incorrect column in row: {row}. Error: {e}"
+msgstr "ستون گم شده یا نادرست در ردیف: {row}. خطا: {e}"
+
+#: .\komak_reshte_site\settings.py:120
+msgid "English"
+msgstr "انگلیسی"
+
+#: .\komak_reshte_site\settings.py:121
+msgid "Persian"
+msgstr "فارسی"

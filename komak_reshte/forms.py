@@ -1,5 +1,6 @@
 from django import forms
-from ..models import University, FieldOfStudy
+from .models import University, FieldOfStudy
+from django.utils.translation import gettext as _
 
 
 class FieldOfStudyForm(forms.Form):
@@ -16,7 +17,7 @@ class FieldOfStudyForm(forms.Form):
         all_exam_groups = FieldOfStudy.objects.values_list(
             "exam_group", flat=True
         ).distinct()
-        exam_group_choices = [("", "Select")] + [
+        exam_group_choices = [("", _("Select"))] + [
             (exam_group, exam_group) for exam_group in all_exam_groups
         ]
         return exam_group_choices

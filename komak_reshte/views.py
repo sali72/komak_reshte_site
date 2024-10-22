@@ -4,8 +4,9 @@ import json
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 
-from .crud.forms import FieldOfStudyForm
+from .forms import FieldOfStudyForm
 from .models import EnrollmentData, FieldOfStudy, University
 
 
@@ -26,12 +27,12 @@ def handle_post_request(request):
     if form.is_valid():
         field = _get_field_from_form(form)
         if _field_already_exists_in_list(field, request.session.get("field_list", [])):
-            form.add_error("field_of_study", "This item already exists in the list.")
+            form.add_error("field_of_study", _("This item already exists in the list."))
             return _render_form_with_errors(request, form)
         if not _exam_group_consistent(field, request.session.get("field_list", [])):
             form.add_error(
                 "exam_group",
-                "All items in the list must belong to the same exam group.",
+                _("All items in the list must belong to the same exam group."),
             )
             return _render_form_with_errors(request, form)
         save_form_data_to_session(request, form)
@@ -155,13 +156,10 @@ def update_order(request):
     if request.method == "POST":
         ordered_data = _get_ordered_data_from_request(request)
         field_list = _get_field_list_from_session(request)
-
         field_dict = _create_field_dict(field_list)
         new_field_list = _update_field_list_order(ordered_data, field_dict)
-
         _save_field_list_to_session(request, new_field_list)
         return JsonResponse({"message": "Order updated successfully"})
-
     return JsonResponse({"message": "Invalid request method"}, status=400)
 
 
@@ -215,7 +213,6 @@ def import_csv(request):
                     {"status": "error", "message": f"Unicode decode error: {str(e)}"},
                     status=400,
                 )
-
             reader = csv.DictReader(data)
             fieldnames = [field.lower() for field in reader.fieldnames]
             missing_columns = validate_csv_columns(fieldnames)
@@ -276,11 +273,8 @@ def import_data_from_csv(reader, fieldnames):
     EnrollmentData.objects.all().delete()
     FieldOfStudy.objects.all().delete()
     University.objects.all().delete()
-
     for row in reader:
-        row = {
-            field.lower(): value for field, value in row.items()
-        }  # Make the row keys lowercase
+        row = {field.lower(): value for field, value in row.items()}  # Make the row keys lowercase
         try:
             university, created = University.objects.get_or_create(
                 name=row["university"], province=row["province"]
@@ -302,7 +296,8 @@ def import_data_from_csv(reader, fieldnames):
                 extra_information=row.get("extra information", ""),
             )
         except KeyError as e:
-            raise KeyError(f"Missing or incorrect column in row: {row}. Error: {e}")
+            raise KeyError(_("Missing or incorrect column in row: {row}. Error: {e}").format(row=row, e=e))
+
 
 
 def export_csv(request):

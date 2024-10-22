@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -5,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Field of Study List</title>
+    <title>{% trans "Create Field of Study List" %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -26,19 +27,19 @@
         var deleteItemUrl = "{% url 'komak_reshte:delete_item' 0 %}".slice(0, -2); // Prepare delete URL without ID
         var csrfToken = "{{ csrf_token }}";
     </script>
+    <script src="{% url 'javascript-catalog' %}"></script>
     <script src="{% static 'komak_reshte/scripts.js' %}"></script>
 </head>
-
 
 <body class="bg-light">
     <div class="container mt-5">
         <!-- Form Section (Upper Part) -->
         <form method="post" class="p-4 border rounded bg-white shadow-sm">
-            <h2 class="text-center mt-4">Please add your items to the list</h2>
+            <h2 class="text-center mt-4">{% trans "Please add your items to the list" %}</h2>
             <br>
             {% csrf_token %}
             <div class="row mb-3">
-                <label for="exam_group" class="col-sm-2 col-form-label">Exam Group:</label>
+                <label for="exam_group" class="col-sm-2 col-form-label">{% trans "Exam Group:" %}</label>
                 <div class="col-sm-10">
                     {{ form.exam_group }}
                     {% if form.exam_group.errors %}
@@ -49,7 +50,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="province" class="col-sm-2 col-form-label">Province:</label>
+                <label for="province" class="col-sm-2 col-form-label">{% trans "Province:" %}</label>
                 <div class="col-sm-10">
                     {{ form.province }}
                     {% if form.province.errors %}
@@ -60,7 +61,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="field_of_study" class="col-sm-2 col-form-label">Field of Study:</label>
+                <label for="field_of_study" class="col-sm-2 col-form-label">{% trans "Field of Study:" %}</label>
                 <div class="col-sm-10">
                     {{ form.field_of_study }}
                     {% if form.field_of_study.errors %}
@@ -72,33 +73,32 @@
             </div>
             <!-- Consistent button width (Add to List) -->
             <div class="text-center">
-                <button type="submit" class="btn btn-primary w-50">Add to List</button>
+                <button type="submit" class="btn btn-primary w-50">{% trans "Add to List" %}</button>
             </div>
         </form>
     </div>
-
     <!-- Table and Buttons Section (Lower Part) with same container -->
     <div class="container mt-5">
         <!-- Table and Buttons Container -->
         <div class="p-4 border rounded bg-white shadow-sm">
-
             <!-- Table Section -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover mt-3" id="sortable-table">
                     <thead class="table-dark">
                         <tr>
-                            <th>Order <small class="text-muted">(Drag to reorder)</small></th>
-                            <th>Unique Code</th>
-                            <th>Field of Study</th>
-                            <th>Exam Group</th>
-                            <th>University</th>
-                            <th>Requires Exam</th>
-                            <th>Tuition Type</th>
-                            <th>First Half Acceptances</th>
-                            <th>Second Half Acceptances</th>
-                            <th>Women</th>
-                            <th>Men</th>
-                            <th>Extra Information</th>
+                            <th>{% trans "Order" %} <small class="text-muted">{% trans "(Drag to reorder)" %}</small>
+                            </th>
+                            <th>{% trans "Unique Code" %}</th>
+                            <th>{% trans "Field of Study" %}</th>
+                            <th>{% trans "Exam Group" %}</th>
+                            <th>{% trans "University" %}</th>
+                            <th>{% trans "Requires Exam" %}</th>
+                            <th>{% trans "Tuition Type" %}</th>
+                            <th>{% trans "First Half Acceptances" %}</th>
+                            <th>{% trans "Second Half Acceptances" %}</th>
+                            <th>{% trans "Women" %}</th>
+                            <th>{% trans "Men" %}</th>
+                            <th>{% trans "Extra Information" %}</th>
                             <td class="text-center"><i class="bi bi-trash"></i></td>
                         </tr>
                     </thead>
@@ -123,39 +123,36 @@
                             <td>{{ item.men }}</td>
                             <td>{{ item.extra_information }}</td>
                             <td>
-                                <button type="button" class="btn btn-danger delete-btn">Delete</button>
+                                <button type="button" class="btn btn-danger delete-btn">{% trans "Delete" %}</button>
                             </td>
                         </tr>
                         {% endfor %}
                         {% else %}
                         <tr>
-                            <td colspan="12" class="text-center">No items in the list yet.</td>
+                            <td colspan="12" class="text-center">{% trans "No items in the list yet." %}</td>
                         </tr>
                         {% endif %}
                     </tbody>
                 </table>
             </div>
-
             <!-- Buttons Section -->
             <div class="d-flex flex-column align-items-center mt-4 mb-5">
                 <!-- Clear List Button -->
-                <button id="clear-list-btn" class="btn btn-outline-danger mb-3 w-50">Clear List</button>
-
+                <button id="clear-list-btn" class="btn btn-outline-danger mb-3 w-50">{% trans "Clear List" %}</button>
                 <!-- Export to CSV Button -->
                 <form method="post" action="{% url 'komak_reshte:export_csv' %}" class="w-50 mb-3">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-success w-100">Export to CSV</button>
+                    <button type="submit" class="btn btn-outline-success w-100">{% trans "Export to CSV" %}</button>
                 </form>
-
                 <!-- Import Data Button -->
                 <form id="import-csv-form" enctype="multipart/form-data" class="w-50">
                     {% csrf_token %}
                     <input type="file" name="csv_file" class="form-control mb-2">
-                    <button type="submit" class="btn btn-outline-primary w-100">Import Data</button>
+                    <button type="submit" class="btn btn-outline-primary w-100">{% trans "Import Data" %}</button>
                 </form>
-
             </div>
         </div>
+    </div>
 </body>
 
 </html>

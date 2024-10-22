@@ -1,0 +1,44 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-22 14:57+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:16
+msgid "Search province"
+msgstr "جستوجوی استان"
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:40
+msgid "Search by field of study, university, or unique code"
+msgstr "جستجو بر اساس رشته تحصیلی، دانشگاه یا کد یکتا"
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:123
+msgid "None"
+msgstr "هیچ"
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:171
+msgid "Are you sure you want to clear the list?"
+msgstr "آیا مطمئن هستید که می‌خواهید لیست را پاک کنید؟"
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:219
+msgid "An error occurred during import."
+msgstr "خطایی در حین وارد کردن رخ داد."
+
+#: .\komak_reshte\static\komak_reshte\scripts.js:224
+msgid "An unexpected error occurred."
+msgstr "خطای غیرمنتظره‌ای رخ داد."
+

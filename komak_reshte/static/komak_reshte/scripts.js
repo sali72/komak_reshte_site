@@ -1,7 +1,6 @@
 $(document).ready(function () {
     // Initial order update for sortable table
     updateOrder();
-
     InitializeProvinceSelect2();
     initializeFieldOfStudySelect2();
     handleExamGroupChange();
@@ -11,11 +10,10 @@ $(document).ready(function () {
     handleDeleteButtons();
     handleImportCsv();
 
-    
     // Initialize searchable province dropdown
     function InitializeProvinceSelect2() {
         $('#id_province').select2({
-            placeholder: "Search province",
+            placeholder: gettext("Search province"),
             allowClear: true,
             ajax: {
                 url: getProvincesUrl,
@@ -39,7 +37,7 @@ $(document).ready(function () {
     // Initialize searchable field of study dropdown
     function initializeFieldOfStudySelect2() {
         $('#id_field_of_study').select2({
-            placeholder: "Search by field of study, university, or unique code",
+            placeholder: gettext("Search by field of study, university, or unique code"),
             allowClear: true,
             ajax: {
                 url: getFieldsOfStudyUrl,
@@ -79,6 +77,7 @@ $(document).ready(function () {
         });
     }
 
+
     // Clear field of study selection when province changes
     function handleProvinceChange() {
         $('#id_province').change(function () {
@@ -88,7 +87,6 @@ $(document).ready(function () {
 
     // Handle exam group change
     $('#id_exam_group').change(onExamGroupChange);
-
     // Handle province change
     $('#id_province').change(onProvinceChange);
 
@@ -122,7 +120,7 @@ $(document).ready(function () {
     function updateFieldsOfStudy(data) {
         var $fieldOfStudy = $('#id_field_of_study');
         $fieldOfStudy.empty(); // Clear previous options
-        $fieldOfStudy.append('<option value="">None</option>'); // Add the default option
+        $fieldOfStudy.append('<option value="">' + gettext('None') + '</option>'); // Add the default option
         $.each(data.fields_of_study, function (index, field) {
             var displayText = `${field.name} - ${field.university} (Code: ${field.unique_code})`;
             $fieldOfStudy.append('<option value="' + field.id + '">' + displayText + '</option>');
@@ -170,7 +168,7 @@ $(document).ready(function () {
     // Clear the list
     function handleClearList() {
         $('#clear-list-btn').click(function () {
-            if (confirm('Are you sure you want to clear the list?')) {
+            if (confirm(gettext('Are you sure you want to clear the list?'))) {
                 $.ajax({
                     url: clearListUrl,
                     type: 'POST',
@@ -218,26 +216,24 @@ $(document).ready(function () {
                     if (response.status === "success") {
                         location.reload();
                     } else {
-                        showError(response.message || "An error occurred during import.");
+                        showError(response.message || gettext("An error occurred during import."));
                     }
                 },
                 error: function (xhr) {
                     const response = xhr.responseJSON;
-                    showError(response.message || "An unexpected error occurred.");
+                    showError(response.message || gettext("An unexpected error occurred."));
                 }
             });
         });
     }
-    
+
     function showError(message) {
         $('#import-csv-form').prepend(
             `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-             </div>`
+                </div>`
         );
     }
-    
-    
-    
+
 });
