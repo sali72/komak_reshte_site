@@ -12,4 +12,5 @@ urlpatterns = [
     path("update-order/", views.update_order, name="update_order"),
     path("delete_item/<int:field_of_study_id>/", delete_item, name="delete_item"),
     path("clear-list/", views.clear_list, name="clear_list"),
+    path("import_csv/", views.import_csv, name="import_csv"),
 ]

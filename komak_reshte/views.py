@@ -27,17 +27,17 @@ def handle_post_request(request):
         field = _get_field_from_form(form)
         if _field_already_exists_in_list(field, request.session.get("field_list", [])):
             form.add_error("field_of_study", "This item already exists in the list.")
-            return render_form_with_errors(request, form)
+            return _render_form_with_errors(request, form)
         if not _exam_group_consistent(field, request.session.get("field_list", [])):
             form.add_error(
                 "exam_group",
                 "All items in the list must belong to the same exam group.",
             )
-            return render_form_with_errors(request, form)
+            return _render_form_with_errors(request, form)
         save_form_data_to_session(request, form)
         return redirect("komak_reshte:create_list")
     else:
-        return render_form_with_errors(request, form)
+        return _render_form_with_errors(request, form)
 
 
 def _field_already_exists_in_list(field, field_list):
@@ -77,7 +77,7 @@ def _get_field_from_form(form):
     return FieldOfStudy.objects.get(id=field_id)
 
 
-def render_form_with_errors(request, form):
+def _render_form_with_errors(request, form):
     errors = form.errors
     for field, error_list in errors.items():
         for error_message in error_list:
@@ -127,16 +127,20 @@ def get_filtered_fields_of_study(province, exam_group, search_term):
         )
     return query.values("id", "name", "university__name", "unique_code")
 
+
 def get_provinces(request):
     search_term = request.GET.get("q", "").strip()
     if search_term:
-        provinces = University.objects.filter(
-            province__icontains=search_term
-        ).values_list("province", flat=True).distinct()
+        provinces = (
+            University.objects.filter(province__icontains=search_term)
+            .values_list("province", flat=True)
+            .distinct()
+        )
     else:
         provinces = University.objects.values_list("province", flat=True).distinct()
     results = [{"id": province, "text": province} for province in provinces]
     return JsonResponse({"results": results})
+
 
 def clear_list(request):
     if request.method == "POST":
@@ -198,6 +202,107 @@ def delete_item(request, field_of_study_id):
         request.session.modified = True
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
+
+
+def import_csv(request):
+    if request.method == "POST":
+        csv_file = request.FILES.get("csv_file")
+        if csv_file:
+            try:
+                data = csv_file.read().decode("latin-1").splitlines()
+            except UnicodeDecodeError as e:
+                return JsonResponse(
+                    {"status": "error", "message": f"Unicode decode error: {str(e)}"},
+                    status=400,
+                )
+
+            reader = csv.DictReader(data)
+            fieldnames = [field.lower() for field in reader.fieldnames]
+            missing_columns = validate_csv_columns(fieldnames)
+            if missing_columns:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": f"Missing columns: {', '.join(missing_columns)}",
+                    },
+                    status=400,
+                )
+            try:
+                import_data_from_csv(reader, fieldnames)
+                redirect("komak_reshte:create_list")
+                return JsonResponse({"status": "success"})
+            except KeyError as e:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": f"Missing or incorrect column: {str(e)}",
+                    },
+                    status=400,
+                )
+            except Exception as e:
+                return JsonResponse(
+                    {"status": "error", "message": f"Unexpected error: {str(e)}"},
+                    status=400,
+                )
+        return JsonResponse(
+            {"status": "error", "message": "No file provided"}, status=400
+        )
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method"}, status=400
+    )
+
+
+def validate_csv_columns(fieldnames):
+    required_columns = [
+        "unique code",
+        "field of study",
+        "exam group",
+        "university",
+        "province",
+        "requires exam",
+        "tuition type",
+        "first half acceptances",
+        "second half acceptances",
+        "women",
+        "men",
+        "extra information",
+    ]
+    missing_columns = [col for col in required_columns if col not in fieldnames]
+    return missing_columns
+
+
+def import_data_from_csv(reader, fieldnames):
+    # Delete existing records
+    EnrollmentData.objects.all().delete()
+    FieldOfStudy.objects.all().delete()
+    University.objects.all().delete()
+
+    for row in reader:
+        row = {
+            field.lower(): value for field, value in row.items()
+        }  # Make the row keys lowercase
+        try:
+            university, created = University.objects.get_or_create(
+                name=row["university"], province=row["province"]
+            )
+            field_of_study = FieldOfStudy.objects.create(
+                unique_code=row["unique code"],
+                exam_group=row["exam group"],
+                name=row["field of study"],
+                university=university,
+                requires_exam=row["requires exam"] == "TRUE",
+                tuition_type=row["tuition type"],
+            )
+            EnrollmentData.objects.create(
+                field_of_study=field_of_study,
+                first_half_acceptances=int(row["first half acceptances"]),
+                second_half_acceptances=int(row["second half acceptances"]),
+                women=row["women"],
+                men=row["men"],
+                extra_information=row.get("extra information", ""),
+            )
+        except KeyError as e:
+            raise KeyError(f"Missing or incorrect column in row: {row}. Error: {e}")
 
 
 def export_csv(request):

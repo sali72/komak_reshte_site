@@ -22,12 +22,12 @@ class FieldOfStudyForm(forms.Form):
         return exam_group_choices
 
     province = forms.ChoiceField(
-        choices=get_all_province_choices(),
+        choices=[("", "All")],
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     exam_group = forms.ChoiceField(
-        choices=get_all_exam_group_choices(),
+        choices=[("", "Select")],
         required=True,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
@@ -40,6 +40,8 @@ class FieldOfStudyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         initial_data = kwargs.get("initial", {})
         super().__init__(*args, **kwargs)
+        self.fields["province"].choices = self.get_all_province_choices()
+        self.fields["exam_group"].choices = self.get_all_exam_group_choices()
         self.fields["province"].initial = initial_data.get("province", "")
         self.fields["exam_group"].initial = initial_data.get("exam_group", "")
         self.populate_fields_of_study()

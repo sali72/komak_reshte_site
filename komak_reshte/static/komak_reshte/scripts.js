@@ -2,7 +2,6 @@ $(document).ready(function () {
     // Initial order update for sortable table
     updateOrder();
 
-    // Initialize searchable dropdown and set event handlers
     InitializeProvinceSelect2();
     initializeFieldOfStudySelect2();
     handleExamGroupChange();
@@ -10,6 +9,7 @@ $(document).ready(function () {
     initializeSortableTable();
     handleClearList();
     handleDeleteButtons();
+    handleImportCsv();
 
     
     // Initialize searchable province dropdown
@@ -203,4 +203,41 @@ $(document).ready(function () {
             });
         });
     }
+
+    function handleImportCsv() {
+        $('#import-csv-form').submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: '/import_csv/',  // Update with your actual URL to handle CSV import
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === "success") {
+                        location.reload();
+                    } else {
+                        showError(response.message || "An error occurred during import.");
+                    }
+                },
+                error: function (xhr) {
+                    const response = xhr.responseJSON;
+                    showError(response.message || "An unexpected error occurred.");
+                }
+            });
+        });
+    }
+    
+    function showError(message) {
+        $('#import-csv-form').prepend(
+            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>`
+        );
+    }
+    
+    
+    
 });
