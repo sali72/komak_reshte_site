@@ -2,7 +2,10 @@
 
 **Introduction**
 
-Komak Reshte is a user-friendly Django application designed to streamline the university application process for Iranian students. It offers a convenient platform to explore available fields of study, create and manage personal lists, and export data effortlessly. By eliminating the need to search for unique codes for each field, Komak Reshte simplifies the process and saves time. 
+Komak Reshte is a hands-on Django project aimed at aiding university applicants. It helps students find available fields of study, create and modify lists, reorder them, and export data—all without the tedious task of finding unique codes for each field of study. The application supports both English and Persian languages and utilizes a simple SQLite database for data storage.
+
+
+Students can import data via CSV or through the Django admin panel. The data should come from Iran's Sanjesh guidebook for Konkoor and must include the following columns: Order, Unique Code, Field of Study, Exam Group, University, Requires Exam, Tuition Type, First Half Acceptances, Second Half Acceptances, Women, Men, and Extra Information. Once imported, users can manage their lists with ease.
 
 **Data Import**
 
