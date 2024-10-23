@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE }}" dir="{% if request.LANGUAGE_CODE == 'fa' %}rtl{% else %}ltr{% endif %}">
 
 <head>
     <meta charset="UTF-8">
@@ -32,6 +32,10 @@
 </head>
 
 <body class="bg-light">
+    <div class="d-flex justify-content-end p-1">
+        <a href="/en/" class="btn btn-outline-primary mx-1">English</a>
+        <a href="/fa/" class="btn btn-outline-secondary mx-1">Persian</a>
+    </div>
     <div class="container mt-5">
         <!-- Form Section (Upper Part) -->
         <form method="post" class="p-4 border rounded bg-white shadow-sm">
